@@ -8,6 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		44397BC21E8A657D00CF9000 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 44397BC11E8A657D00CF9000 /* main.m */; };
+		444460011E95CB47007A2F66 /* RMSDataDownloadJob.m in Sources */ = {isa = PBXBuildFile; fileRef = 444460001E95CB47007A2F66 /* RMSDataDownloadJob.m */; };
+		444460041E962AE4007A2F66 /* RMSEarthPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 444460031E962AE4007A2F66 /* RMSEarthPoint.m */; };
+		44B00F351E9C70DC0038B4DA /* RMSEarthObservationSatellite.m in Sources */ = {isa = PBXBuildFile; fileRef = 44B00F321E9C70DC0038B4DA /* RMSEarthObservationSatellite.m */; };
+		44B00F361E9C70DC0038B4DA /* RMSMath.m in Sources */ = {isa = PBXBuildFile; fileRef = 44B00F341E9C70DC0038B4DA /* RMSMath.m */; };
+		44E0E0581E8CA3D300097D4A /* RMSSysthesisCalculateCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 44E0E0571E8CA3D300097D4A /* RMSSysthesisCalculateCenter.m */; };
+		44E0E05B1E8CA42C00097D4A /* RMSCoreCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 44E0E05A1E8CA42C00097D4A /* RMSCoreCenter.m */; };
+		44E0E0641E8CB15C00097D4A /* RMSSatellite.m in Sources */ = {isa = PBXBuildFile; fileRef = 44E0E0631E8CB15C00097D4A /* RMSSatellite.m */; };
+		44E0E06F1E8CD18900097D4A /* RMSImageDataUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = 44E0E06E1E8CD18900097D4A /* RMSImageDataUnit.m */; };
+		44E0E0721E8CFFB400097D4A /* RMSDataDownloadRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 44E0E0711E8CFFB400097D4A /* RMSDataDownloadRequest.m */; };
+		44E0E07E1E8D097800097D4A /* RMSDataRelaySatellite.m in Sources */ = {isa = PBXBuildFile; fileRef = 44E0E07D1E8D097800097D4A /* RMSDataRelaySatellite.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +35,28 @@
 /* Begin PBXFileReference section */
 		44397BBE1E8A657D00CF9000 /* PaperRMS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PaperRMS; sourceTree = BUILT_PRODUCTS_DIR; };
 		44397BC11E8A657D00CF9000 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		44445FFF1E95CB47007A2F66 /* RMSDataDownloadJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMSDataDownloadJob.h; sourceTree = "<group>"; };
+		444460001E95CB47007A2F66 /* RMSDataDownloadJob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMSDataDownloadJob.m; sourceTree = "<group>"; };
+		444460021E962AE4007A2F66 /* RMSEarthPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMSEarthPoint.h; sourceTree = "<group>"; };
+		444460031E962AE4007A2F66 /* RMSEarthPoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMSEarthPoint.m; sourceTree = "<group>"; };
+		44B00F311E9C70DC0038B4DA /* RMSEarthObservationSatellite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMSEarthObservationSatellite.h; sourceTree = "<group>"; };
+		44B00F321E9C70DC0038B4DA /* RMSEarthObservationSatellite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMSEarthObservationSatellite.m; sourceTree = "<group>"; };
+		44B00F331E9C70DC0038B4DA /* RMSMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMSMath.h; sourceTree = "<group>"; };
+		44B00F341E9C70DC0038B4DA /* RMSMath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMSMath.m; sourceTree = "<group>"; };
+		44E0E0561E8CA3D300097D4A /* RMSSysthesisCalculateCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMSSysthesisCalculateCenter.h; sourceTree = "<group>"; };
+		44E0E0571E8CA3D300097D4A /* RMSSysthesisCalculateCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMSSysthesisCalculateCenter.m; sourceTree = "<group>"; };
+		44E0E0591E8CA42C00097D4A /* RMSCoreCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMSCoreCenter.h; sourceTree = "<group>"; };
+		44E0E05A1E8CA42C00097D4A /* RMSCoreCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMSCoreCenter.m; sourceTree = "<group>"; };
+		44E0E0621E8CB15C00097D4A /* RMSSatellite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMSSatellite.h; sourceTree = "<group>"; };
+		44E0E0631E8CB15C00097D4A /* RMSSatellite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMSSatellite.m; sourceTree = "<group>"; };
+		44E0E06B1E8CCF1600097D4A /* SystemMeasureUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemMeasureUnit.h; sourceTree = "<group>"; };
+		44E0E06C1E8CCFD000097D4A /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		44E0E06D1E8CD18900097D4A /* RMSImageDataUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMSImageDataUnit.h; sourceTree = "<group>"; };
+		44E0E06E1E8CD18900097D4A /* RMSImageDataUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMSImageDataUnit.m; sourceTree = "<group>"; };
+		44E0E0701E8CFFB400097D4A /* RMSDataDownloadRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMSDataDownloadRequest.h; sourceTree = "<group>"; };
+		44E0E0711E8CFFB400097D4A /* RMSDataDownloadRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMSDataDownloadRequest.m; sourceTree = "<group>"; };
+		44E0E07C1E8D097800097D4A /* RMSDataRelaySatellite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMSDataRelaySatellite.h; sourceTree = "<group>"; };
+		44E0E07D1E8D097800097D4A /* RMSDataRelaySatellite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMSDataRelaySatellite.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +89,29 @@
 		44397BC01E8A657D00CF9000 /* PaperRMS */ = {
 			isa = PBXGroup;
 			children = (
+				44B00F311E9C70DC0038B4DA /* RMSEarthObservationSatellite.h */,
+				44B00F321E9C70DC0038B4DA /* RMSEarthObservationSatellite.m */,
+				44B00F331E9C70DC0038B4DA /* RMSMath.h */,
+				44B00F341E9C70DC0038B4DA /* RMSMath.m */,
+				44E0E0561E8CA3D300097D4A /* RMSSysthesisCalculateCenter.h */,
+				44E0E0571E8CA3D300097D4A /* RMSSysthesisCalculateCenter.m */,
+				44E0E0591E8CA42C00097D4A /* RMSCoreCenter.h */,
+				44E0E05A1E8CA42C00097D4A /* RMSCoreCenter.m */,
+				44E0E0621E8CB15C00097D4A /* RMSSatellite.h */,
+				44E0E0631E8CB15C00097D4A /* RMSSatellite.m */,
 				44397BC11E8A657D00CF9000 /* main.m */,
+				44E0E06B1E8CCF1600097D4A /* SystemMeasureUnit.h */,
+				44E0E06C1E8CCFD000097D4A /* PrefixHeader.pch */,
+				44E0E06D1E8CD18900097D4A /* RMSImageDataUnit.h */,
+				44E0E06E1E8CD18900097D4A /* RMSImageDataUnit.m */,
+				44E0E0701E8CFFB400097D4A /* RMSDataDownloadRequest.h */,
+				44E0E0711E8CFFB400097D4A /* RMSDataDownloadRequest.m */,
+				44E0E07C1E8D097800097D4A /* RMSDataRelaySatellite.h */,
+				44E0E07D1E8D097800097D4A /* RMSDataRelaySatellite.m */,
+				44445FFF1E95CB47007A2F66 /* RMSDataDownloadJob.h */,
+				444460001E95CB47007A2F66 /* RMSDataDownloadJob.m */,
+				444460021E962AE4007A2F66 /* RMSEarthPoint.h */,
+				444460031E962AE4007A2F66 /* RMSEarthPoint.m */,
 			);
 			path = PaperRMS;
 			sourceTree = "<group>";
@@ -120,7 +174,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44E0E07E1E8D097800097D4A /* RMSDataRelaySatellite.m in Sources */,
+				44E0E0721E8CFFB400097D4A /* RMSDataDownloadRequest.m in Sources */,
+				44E0E0581E8CA3D300097D4A /* RMSSysthesisCalculateCenter.m in Sources */,
+				44E0E0641E8CB15C00097D4A /* RMSSatellite.m in Sources */,
+				444460041E962AE4007A2F66 /* RMSEarthPoint.m in Sources */,
+				444460011E95CB47007A2F66 /* RMSDataDownloadJob.m in Sources */,
+				44B00F351E9C70DC0038B4DA /* RMSEarthObservationSatellite.m in Sources */,
+				44B00F361E9C70DC0038B4DA /* RMSMath.m in Sources */,
+				44E0E05B1E8CA42C00097D4A /* RMSCoreCenter.m in Sources */,
 				44397BC21E8A657D00CF9000 /* main.m in Sources */,
+				44E0E06F1E8CD18900097D4A /* RMSImageDataUnit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,6 +282,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEVELOPMENT_TEAM = A535C7GTCH;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/PaperRMS/PrefixHeader.pch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -226,6 +291,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEVELOPMENT_TEAM = A535C7GTCH;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/PaperRMS/PrefixHeader.pch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -249,6 +315,7 @@
 				44397BC71E8A657D00CF9000 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

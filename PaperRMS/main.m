@@ -8,10 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+#import "RMSCoreCenter.h"
+
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         // insert code here...
         NSLog(@"Hello, World!");
+        
+        RMSCoreCenter *center = [[RMSCoreCenter alloc] init];
+        [center fire];
+        
     }
     return 0;
 }
