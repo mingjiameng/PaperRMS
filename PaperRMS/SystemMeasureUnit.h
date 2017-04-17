@@ -11,7 +11,7 @@
 
 typedef double RMSSatelliteTime; // S
 typedef double RMSDataSize; // MB
-typedef NSUInteger RMSSatelliteID;
+typedef int RMSSatelliteID;
 typedef double RMSAngle;
 typedef double RMSRadian; // 单位:弧度
 typedef double RMSPriorityIndex;
@@ -28,9 +28,9 @@ typedef struct _RMSTimeRange {
 #define DRS_SWITCH_TIME 180.0f
 #define EOS_SWITCH_TIME 180.0f
 #define LONGEST_SWITCH_ON_TIME 600.0f
-#define SIMULATION_DURATION 8640000 
+#define SIMULATION_DURATION 282968 // 50个轨道周期
 
-#define FILE_OUTPUT_PATH_PREFIX_STRING @"/Users/zkey/Desktop/science/paper_allocation_algorithm/input/"
-#define FILE_INPUT_PATH_PREFIX_STRING @"/Users/zkey/Desktop/science/paper_allocation_algorithm/output/"
+#define FILE_OUTPUT_PATH_PREFIX_STRING @"/Users/zkey/Desktop/science/paper_allocation_algorithm/output/"
+#define FILE_INPUT_PATH_PREFIX_STRING @"/Users/zkey/Desktop/science/paper_allocation_algorithm/input/"
 
 #endif /* SystemMeasureUnit_h */

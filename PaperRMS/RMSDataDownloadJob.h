@@ -11,6 +11,8 @@
 #import "RMSEarthObservationSatellite.h"
 #import "RMSDataRelaySatellite.h"
 
+@class RMSImageDataUnit;
+
 @interface RMSDataDownloadJob : NSObject
 
 @property (nonatomic, weak, nullable) RMSEarthObservationSatellite *eos;
@@ -21,6 +23,8 @@
 
 @property RMSPriorityIndex PI;
 @property RMSDataSize dataSize;
+
+@property double TF; // PI 参数之一
 
 @property (nonatomic, strong, nonnull) NSArray<RMSImageDataUnit *> *iduArray; // 要传输的IDU
 

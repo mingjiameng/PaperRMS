@@ -15,5 +15,6 @@
 
 @property (nonatomic, strong, nonnull) RMSEarthObservationSatellite *eos;
 @property (nonatomic, copy, nonnull) NSArray<RMSImageDataUnit *> *iduArray;
+@property RMSDataSize dataSize;
 
 @end

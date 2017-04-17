@@ -15,6 +15,6 @@
 @interface RMSMath : NSObject
 
 + (RMSSatelliteTime)orbitPeriodOfSatelliteOrbit:(RMSSatelliteOrbit)orbit;
-+ (RMSTimeRange)nextVisibleTimeRangeBetweenEOS:(RMSEarthObservationSatellite *)eos andDRS:(RMSDataRelaySatellite *)drs inTimeRange:(RMSTimeRange)validTimeRange;
++ (RMSTimeRange)nextVisibleTimeRangeBetweenEOS:(RMSEarthObservationSatellite *)eos andDRS:(RMSDataRelaySatellite *)drs fromTime:(RMSSatelliteTime)time;
 
 @end

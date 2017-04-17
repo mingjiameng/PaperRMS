@@ -15,5 +15,6 @@
 @property (nonatomic) RMSSatelliteTime nearestTransmissionEnableTime;
 
 - (void)schedualDDJ:(nonnull RMSDataDownloadJob *)ddj;
+- (nonnull instancetype)initWithSatelliteID:(RMSSatelliteID)uniqueID;
 
 @end

@@ -15,8 +15,7 @@ int main(int argc, const char * argv[]) {
         // insert code here...
         NSLog(@"Hello, World!");
         
-        RMSCoreCenter *center = [[RMSCoreCenter alloc] init];
-        [center fire];
+        [[RMSCoreCenter sharedCoreCenter] fire];
         
     }
     return 0;

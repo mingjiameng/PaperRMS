@@ -17,6 +17,7 @@
 
 @property (nonatomic, strong, nonnull) NSMutableArray<RMSImageDataUnit *> *observationTaskQueue;
 @property (nonatomic, strong, nullable) RMSImageDataUnit *currentTask;
+
 @property (nonatomic, strong, nonnull) NSMutableArray<RMSImageDataUnit *> *iduBufferedQueue;
 
 @property (nonatomic, strong, nonnull) NSMutableArray<RMSDataDownloadJob *> *schedualedDdjQueue;
@@ -32,13 +33,15 @@
     RMSSatelliteTime _ddrClock;
 }
 
-- (instancetype)init
+- (instancetype)initWithSatelliteID:(RMSSatelliteID)uniqueID
 {
     self = [super init];
     
     if (self) {
+        self.uniqueID = uniqueID;
         [self readInObservationTask];
         _ddrClock = DATA_DOWNLOAD_REQUEST_TIME_INTERVAL;
+        _iduBufferedQueue = [[NSMutableArray alloc] init];
         _schedualedDdjQueue = [[NSMutableArray alloc] init];
         _completedDDJs = [[NSMutableArray alloc] init];
     }
@@ -48,9 +51,10 @@
 
 - (void)readInObservationTask
 {
-    _observationTaskQueue = [[NSMutableArray alloc] init];
+    self.observationTaskQueue = [[NSMutableArray alloc] init];
     
-    NSString *filePath = [NSString stringWithFormat:@"%@eos/%02ldEOS_task.txt",FILE_INPUT_PATH_PREFIX_STRING, (long)self.uniqueID];
+    NSString *filePath = [NSString stringWithFormat:@"%@eos%02d_task.txt",FILE_INPUT_PATH_PREFIX_STRING, (self.uniqueID + 1)];
+    NSLog(@"eos-%d task file path:%@",self.uniqueID, filePath);
     FILE *taskFile = fopen([filePath cStringUsingEncoding:NSUTF8StringEncoding], "r");
     assert(taskFile != NULL);
     
@@ -72,6 +76,8 @@
         
         return NSOrderedDescending;
     }];
+    
+    NSLog(@"eos-%d read in %ld task", self.uniqueID, self.observationTaskQueue.count);
 }
 
 - (void)updateState
@@ -126,6 +132,12 @@
     request.eos = self;
     request.iduArray = self.iduBufferedQueue;
     
+    RMSDataSize dataSize = 0;
+    for (RMSImageDataUnit *idu in request.iduArray) {
+        dataSize += idu.size;
+    }
+    request.dataSize = dataSize;
+    
     [[RMSSysthesisCalculateCenter sharedSysthesisCalculateCenter] dataDownloadRequest:request];
 }
 
@@ -178,14 +190,14 @@
     // EOS两次connection之间的时间间隔
     RMSSatelliteTime connectionInterval, minConnectionInterval, maxConnectionInterval, aveConnectionInterval;
     RMSSatelliteTime lastConnectionTime, connectionIntervalAmount;
-    int connectionCount;
+    long connectionBuilt, connectionSchedualed;
     
     connectionInterval = maxConnectionInterval = lastConnectionTime = connectionIntervalAmount = 0;
-    minConnectionInterval = 0x3f3f3f3f;
-    connectionCount = 0;
+    minConnectionInterval = 100000000.0f;
+    connectionBuilt = connectionSchedualed = 0;
     
     for (RMSDataDownloadJob *ddj in self.completedDDJs) {
-        ++connectionCount;
+        ++connectionBuilt;
         connectionInterval = ddj.startTime - lastConnectionTime;
         lastConnectionTime = ddj.startTime;
         connectionIntervalAmount += connectionInterval;
@@ -193,24 +205,27 @@
         if (connectionInterval < minConnectionInterval) {
             minConnectionInterval = connectionInterval;
         }
-        else if (connectionInterval > maxConnectionInterval) {
+        
+        if (connectionInterval > maxConnectionInterval) {
             maxConnectionInterval = connectionInterval;
         }
         
     }
     
-    aveConnectionInterval = connectionIntervalAmount / connectionCount;
+    connectionSchedualed = connectionBuilt + self.schedualedDdjQueue.count;
+    
+    aveConnectionInterval = connectionIntervalAmount / connectionBuilt;
     
     // 写日志
-    NSString *logFilePath = [NSString stringWithFormat:@"%@eos_log_%ld", FILE_OUTPUT_PATH_PREFIX_STRING, (long)self.uniqueID];
+    NSString *logFilePath = [NSString stringWithFormat:@"%@eos_log_%d.txt", FILE_OUTPUT_PATH_PREFIX_STRING, self.uniqueID];
     FILE *logFile = fopen([logFilePath cStringUsingEncoding:NSUTF8StringEncoding], "w");
     assert(logFile != NULL);
     
-    fprintf(logFile, "%d idu produced and %d idu downloaded\n", producedIDU, downloadedIDU);
-    fprintf(logFile, "%lf data produced and %lf data downloaded\n", producedData, downloadedData);
+    fprintf(logFile, "%d idu produced and %d idu downloaded percentage %lf\n", producedIDU, downloadedIDU, (double)downloadedIDU / producedIDU);
+    fprintf(logFile, "%lf data produced and %lf data downloaded percentage %lf\n", producedData, downloadedData, (double)downloadedData / producedData);
     fprintf(logFile, "idu average download time %lf\n", iduDownloadAverageTime);
     
-    fprintf(logFile, "%d connection builed\n", connectionCount);
+    fprintf(logFile, "%ld connection built, %ld connection schedualed\n", connectionBuilt, connectionSchedualed);
     fprintf(logFile, "connection interval: min-%lf max-%lf ave-%lf\n", minConnectionInterval, maxConnectionInterval, aveConnectionInterval);
     
     fclose(logFile);

@@ -23,7 +23,7 @@
 #define FIRE_CLOCK_INTERVAL 300
 @implementation RMSSysthesisCalculateCenter
 {
-    double calcuFireClock;
+    double _calcuFireClock;
 }
 
 + (instancetype)sharedSysthesisCalculateCenter
@@ -44,7 +44,7 @@
     
     if (self) {
         _ddrPool = [[NSMutableDictionary alloc] init];
-        calcuFireClock = FIRE_CLOCK_INTERVAL;
+        _calcuFireClock = FIRE_CLOCK_INTERVAL;
         _systemTime = 0;
         
     }
@@ -56,13 +56,13 @@
 {
     _systemTime += STATE_UPDATE_TIME_STEP;
     
-    if (calcuFireClock > 0) {
-        calcuFireClock -= STATE_UPDATE_TIME_STEP;
+    if (_calcuFireClock > 0) {
+        _calcuFireClock -= STATE_UPDATE_TIME_STEP;
     }
     else {
         [self schedualDDJ];
         
-        calcuFireClock = FIRE_CLOCK_INTERVAL;
+        _calcuFireClock = FIRE_CLOCK_INTERVAL;
     }
 }
 
@@ -77,27 +77,45 @@
     NSArray *DDJArr = [self produceDDJ];
     [self calcuPI:DDJArr];
     NSArray *validDDJArr = [self selectDDJ:DDJArr];
+    //NSLog(@"schedualed %ld DDJ", validDDJArr.count);
     [[RMSCoreCenter sharedCoreCenter] assignDDJ:validDDJArr];
 }
 
 - (NSArray<RMSDataDownloadJob *> *)produceDDJ
 {
+    NSMutableArray *ddrArr = [NSMutableArray arrayWithCapacity:self.ddrPool.allKeys.count];
+    for (NSNumber *eosID in self.ddrPool.allKeys) {
+        [ddrArr addObject:[self.ddrPool objectForKey:eosID]];
+    }
+
+    //NSLog(@"%@", self.ddrPool);
+    
+    [self.ddrPool removeAllObjects];
+    
+    RMSDataSize SUM_C_k_i_x = 0;
+    for (RMSDataDownloadRequest *ddr in ddrArr) {
+        SUM_C_k_i_x += ddr.dataSize;
+    }
+    
+    //NSLog(@"%lf MB data from %ld DDR", SUM_C_k_i_x, ddrArr.count);
+    
+    //NSLog(@"begin schedual DDJ for %ld ddr", ddrArr.count);
+    
     RMSSatelliteTime w_k_i_s, w_k_i_e;
     RMSSatelliteTime t_i_s, t_k_s, t_k_i_s, t_k_i_e;
     RMSDataSize B_k, C_u_x, C_k_i_x;
     RMSSatelliteTime T_k_i_x, t_k_i_x_s, t_k_i_x_e;
-    NSMutableArray<RMSDataDownloadJob *> *ddjArr = [NSMutableArray arrayWithCapacity:self.drsArray.count * self.ddrPool.allKeys.count];
+    NSMutableArray<RMSDataDownloadJob *> *ddjArr = [[NSMutableArray alloc] init];
     for (RMSDataRelaySatellite *drs in self.drsArray) {
-        for (NSNumber *eosID in self.ddrPool.allKeys) {
-            RMSDataDownloadRequest *ddr = [self.ddrPool objectForKey:eosID];
-            RMSTimeRange nextOrbitPeriod = {_systemTime, _systemTime + ddr.eos.orbitPeriod};
-            RMSTimeRange nextVisibleTimeWindow = [RMSMath nextVisibleTimeRangeBetweenEOS:ddr.eos andDRS:drs inTimeRange:nextOrbitPeriod];
+        for (RMSDataDownloadRequest *ddr in ddrArr) {
+            RMSTimeRange nextVisibleTimeWindow = [RMSMath nextVisibleTimeRangeBetweenEOS:ddr.eos andDRS:drs fromTime:self.systemTime];
+            //NSLog(@"system time:%lf next visible time window:%lf-%lf", self.systemTime, nextVisibleTimeWindow.beginAt, nextVisibleTimeWindow.length);
             w_k_i_s = nextVisibleTimeWindow.beginAt;
             w_k_i_e = nextVisibleTimeWindow.beginAt + nextVisibleTimeWindow.length;
             t_i_s = drs.nearestServiceEnableTime;
             t_k_s = ddr.eos.nearestTransmissionEnableTime;
-            t_k_i_s = MAX(t_i_s, w_k_i_s);
-            t_k_i_s = MAX(t_k_i_s, t_k_s);
+            t_k_i_s = MAX(t_i_s, t_k_s);
+            t_k_i_s = MAX(t_k_i_s, w_k_i_s);
             t_k_i_e = MIN(t_k_i_s + LONGEST_SWITCH_ON_TIME, w_k_i_e);
             
             if (t_k_i_e <= t_k_i_s) {
@@ -130,39 +148,60 @@
             job.waitingTime = t_k_i_x_s - t_i_s;
             job.iduArray = permittedIDUArr;
             job.dataSize = C_k_i_x;
+            job.TF = ddr.dataSize / SUM_C_k_i_x * ddrArr.count;
             
             [ddjArr addObject:job];
         }
     }
     
-    [self.ddrPool removeAllObjects];
+    //NSLog(@"schedualed %ld ddj from %ld ddr", ddjArr.count, ddrArr.count);
+    
+//    for (RMSDataDownloadJob *ddj in ddjArr) {
+//        NSLog(@"PI:%lf", ddj.TF);
+//    }
+    
+    return ddjArr;
 }
 
 - (void)calcuPI:(NSArray<RMSDataDownloadJob *> *)DDJArr
 {
-    RMSDataSize SUM_C_k_i_x = 0;
-    for (RMSDataDownloadJob *job in DDJArr) {
-        SUM_C_k_i_x += job.dataSize;
-    }
+    //NSLog(@"begin calcu PI");
+    
+//    RMSDataSize SUM_C_k_i_x = 0;
+//    for (RMSDataDownloadJob *job in DDJArr) {
+//        SUM_C_k_i_x += job.dataSize;
+//    }
     
     double TF_k_i_x, QOS_k_i_x, E_k_i_x, BU_k_i_x;
     RMSSatelliteTime t = _systemTime;
-    RMSSatelliteTime duration;
+//    RMSSatelliteTime duration;
+    //NSLog(@"(");
     for (RMSDataDownloadJob *job in DDJArr) {
-        TF_k_i_x = job.dataSize / SUM_C_k_i_x;
+        TF_k_i_x = job.TF;
         
         E_k_i_x = 0;
         for (RMSImageDataUnit *idu in job.iduArray) {
             E_k_i_x += idu.size / job.dataSize * (t - idu.producedTime);
         }
         
-        QOS_k_i_x = log(E_k_i_x / job.eos.orbitPeriod - 1);
+        QOS_k_i_x = pow(M_E, E_k_i_x / job.eos.orbitPeriod);
         
-        duration = job.endTime - job.startTime;
-        BU_k_i_x = duration / (duration + job.waitingTime);
+//        duration = job.endTime - job.startTime;
+        BU_k_i_x = log2(MIN(job.eos.orbitPeriod / job.waitingTime + 1, 8));
+        
         
         job.PI = TF_k_i_x * QOS_k_i_x * BU_k_i_x;
+        
+        //NSLog(@"Ex:%lf Qos:%lf",E_k_i_x, QOS_k_i_x);
+        //NSLog(@"DataSize:%lf TF:%lf",job.dataSize, job.TF);
+//        if (job.eos.uniqueID == 1) {
+//            NSLog(@"PI-%lf TF-%lf Qos-%lf", job.PI, job.TF, QOS_k_i_x);
+//        }
+        
+        //NSLog(@"EOS:%d PI:%lf TF:%lf QOS:%lf BU:%lf - Ex:%lf",job.eos.uniqueID, job.PI, TF_k_i_x, QOS_k_i_x, BU_k_i_x, E_k_i_x);
     }
+    
+    //NSLog(@")");
 }
 
 - (NSArray<RMSDataDownloadJob *> *)selectDDJ:(NSArray<RMSDataDownloadJob *> *)DDJArr
@@ -179,8 +218,21 @@
     
     NSMutableArray<RMSDataDownloadJob *> *validJobs = [[NSMutableArray alloc] init];
     for (NSMutableArray *group in DDJGroups) {
-        [validJobs addObject:[group firstObject]];
-        [group removeObjectAtIndex:0];
+        [group sortUsingComparator:^NSComparisonResult(RMSDataDownloadJob * _Nonnull obj1, RMSDataDownloadJob * _Nonnull obj2) {
+            if (obj1.PI < obj2.PI) {
+                return NSOrderedDescending;
+            }
+            else if (obj1.PI == obj2.PI) {
+                return NSOrderedSame;
+            }
+            
+            return NSOrderedAscending;
+        }];
+        
+        if (group.count > 0) {
+            [validJobs addObject:[group firstObject]];
+            [group removeObjectAtIndex:0];
+        }
     }
     
     bool duplicated = true;
@@ -188,8 +240,6 @@
     RMSDataDownloadJob *duplicatedJob01, *duplicatedJob02;
     NSMutableArray<RMSDataDownloadJob *> *jobGroup01, *jobGroup02;
     while (duplicated) {
-        duplicated = false;
-        
         [validJobs sortUsingComparator:^NSComparisonResult(RMSDataDownloadJob * _Nonnull obj1, RMSDataDownloadJob * _Nonnull obj2) {
             if (obj1.eos.uniqueID < obj2.eos.uniqueID) {
                 return NSOrderedAscending;
@@ -201,6 +251,7 @@
             return NSOrderedDescending;
         }];
         
+        duplicated = false;
         for (duplicatedIndex = 1; duplicatedIndex < validJobs.count; ++duplicatedIndex) {
             duplicatedJob01 = [validJobs objectAtIndex:duplicatedIndex - 1];
             duplicatedJob02 = [validJobs objectAtIndex:duplicatedIndex];
@@ -210,7 +261,6 @@
             }
         }
         
-        
         if (duplicated) {
             if (duplicatedJob02.PI > duplicatedJob01.PI) {
                 RMSDataDownloadJob *tmpJob = duplicatedJob01;
@@ -218,24 +268,40 @@
                 duplicatedJob02 = tmpJob;
             }
             
-            jobGroup01 = [DDJGroups objectAtIndex:duplicatedJob01.drs.uniqueID];
             jobGroup02 = [DDJGroups objectAtIndex:duplicatedJob02.drs.uniqueID];
-            
-            if (jobGroup02.count > 0 || jobGroup01.count <= 0) {
-                [validJobs removeObject:duplicatedJob02];
-                if (jobGroup02.count > 0) {
-                    [validJobs addObject:[jobGroup02 firstObject]];
-                    [jobGroup02 removeObjectAtIndex:0];
-                }
-            }
-            else {
-                [validJobs removeObject:duplicatedJob01];
-                if (jobGroup01.count > 0) {
-                    [validJobs addObject:[jobGroup01 firstObject]];
-                    [jobGroup01 removeObjectAtIndex:0];
-                }
+            [validJobs removeObject:duplicatedJob02];
+            if (jobGroup02.count > 0) {
+                [validJobs addObject:[jobGroup02 firstObject]];
+                [jobGroup02 removeObjectAtIndex:0];
             }
         }
+        
+        
+//        if (duplicated) {
+//            if (duplicatedJob02.PI > duplicatedJob01.PI) {
+//                RMSDataDownloadJob *tmpJob = duplicatedJob01;
+//                duplicatedJob01 = duplicatedJob02;
+//                duplicatedJob02 = tmpJob;
+//            }
+//            
+//            jobGroup01 = [DDJGroups objectAtIndex:duplicatedJob01.drs.uniqueID];
+//            jobGroup02 = [DDJGroups objectAtIndex:duplicatedJob02.drs.uniqueID];
+//            
+//            if (jobGroup02.count > 0 || jobGroup01.count <= 0) {
+//                [validJobs removeObject:duplicatedJob02];
+//                if (jobGroup02.count > 0) {
+//                    [validJobs addObject:[jobGroup02 firstObject]];
+//                    [jobGroup02 removeObjectAtIndex:0];
+//                }
+//            }
+//            else {
+//                [validJobs removeObject:duplicatedJob01];
+//                if (jobGroup01.count > 0) {
+//                    [validJobs addObject:[jobGroup01 firstObject]];
+//                    [jobGroup01 removeObjectAtIndex:0];
+//                }
+//            }
+//        }
     }
     
     return validJobs;

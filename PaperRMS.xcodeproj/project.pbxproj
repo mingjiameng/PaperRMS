@@ -91,6 +91,8 @@
 			children = (
 				44B00F311E9C70DC0038B4DA /* RMSEarthObservationSatellite.h */,
 				44B00F321E9C70DC0038B4DA /* RMSEarthObservationSatellite.m */,
+				44E0E07C1E8D097800097D4A /* RMSDataRelaySatellite.h */,
+				44E0E07D1E8D097800097D4A /* RMSDataRelaySatellite.m */,
 				44B00F331E9C70DC0038B4DA /* RMSMath.h */,
 				44B00F341E9C70DC0038B4DA /* RMSMath.m */,
 				44E0E0561E8CA3D300097D4A /* RMSSysthesisCalculateCenter.h */,
@@ -106,8 +108,6 @@
 				44E0E06E1E8CD18900097D4A /* RMSImageDataUnit.m */,
 				44E0E0701E8CFFB400097D4A /* RMSDataDownloadRequest.h */,
 				44E0E0711E8CFFB400097D4A /* RMSDataDownloadRequest.m */,
-				44E0E07C1E8D097800097D4A /* RMSDataRelaySatellite.h */,
-				44E0E07D1E8D097800097D4A /* RMSDataRelaySatellite.m */,
 				44445FFF1E95CB47007A2F66 /* RMSDataDownloadJob.h */,
 				444460001E95CB47007A2F66 /* RMSDataDownloadJob.m */,
 				444460021E962AE4007A2F66 /* RMSEarthPoint.h */,

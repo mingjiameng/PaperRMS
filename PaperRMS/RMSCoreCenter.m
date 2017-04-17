@@ -18,7 +18,6 @@
 @property (nonatomic, strong, nonnull) RMSSysthesisCalculateCenter *calcuCenter;
 @property (nonatomic, strong, nonnull) NSArray<RMSDataRelaySatellite *> *drsArray;
 
-
 @end
 
 
@@ -44,6 +43,8 @@
     if (self) {
         [self readInEos];
         [self readInDrs];
+        self.calcuCenter = [RMSSysthesisCalculateCenter sharedSysthesisCalculateCenter];
+        self.calcuCenter.drsArray = self.drsArray;
     }
     
     return self;
@@ -51,24 +52,23 @@
 
 - (void)readInEos
 {
-    NSString *eosParamFile = @"eos_param.txt";
+    NSString *eosParamFile = @"eos_param_4_orbit_plane.txt";
     NSString *eosParamFilePath = [FILE_INPUT_PATH_PREFIX_STRING stringByAppendingString:eosParamFile];
     FILE *eosParam = fopen([eosParamFilePath cStringUsingEncoding:NSUTF8StringEncoding], "r");
     assert(eosParam != NULL);
     
     int n;
     double raan, aop, oi, sma, e, ta;
-    int retrograde;
+    //int retrograde;
     int satelliteID;
     fscanf(eosParam, "%d", &n);
+    NSLog(@"%d eos", n);
     NSMutableArray *eosSet = [[NSMutableArray alloc] initWithCapacity:n];
     while (n--) {
-        RMSEarthObservationSatellite *newEos = [[RMSEarthObservationSatellite alloc] init];
-        fscanf(eosParam, "satellite_id %d", &satelliteID);
-        newEos.uniqueID = satelliteID;
-        NSLog(@"eosID %d", satelliteID);
+        fscanf(eosParam, "%d", &satelliteID);
+        RMSEarthObservationSatellite *newEos = [[RMSEarthObservationSatellite alloc] initWithSatelliteID:satelliteID];
         
-        fscanf(eosParam, "%lf %lf %lf %lf %lf %lf %d", &raan, &aop, &oi, &sma, &e, &ta, &retrograde);
+        fscanf(eosParam, "%lf %lf %lf %lf %lf %lf", &raan, &aop, &oi, &sma, &e, &ta);
         RMSSatelliteOrbit orbit;
         orbit.raan = raan;
         orbit.aop = aop;
@@ -76,7 +76,7 @@
         orbit.sma = sma;
         orbit.e = e;
         orbit.ta = ta;
-        orbit.retrograde = retrograde;
+        orbit.retrograde = true;
         newEos.orbit = orbit;
         
         newEos.bandwidth = 650.0f;
@@ -91,10 +91,6 @@
 
 - (void)readInDrs
 {
-    NSString *path = [FILE_INPUT_PATH_PREFIX_STRING stringByAppendingString:@"delay_satellite_param.txt"];
-    FILE *param = fopen([path cStringUsingEncoding:NSUTF8StringEncoding], "r");
-    assert(param != NULL);
-    
     NSString *drsParamFile = @"drs_param.txt";
     NSString *drsParamFilePath = [FILE_INPUT_PATH_PREFIX_STRING stringByAppendingString:drsParamFile];
     FILE *drsParam = fopen([drsParamFilePath cStringUsingEncoding:NSUTF8StringEncoding], "r");
@@ -104,13 +100,15 @@
     double raan, aop, oi, sma, e, ta;
     int satelliteID;
     fscanf(drsParam, "%d", &m);
+    NSLog(@"%d drs", m);
     NSMutableArray *drsSet = [[NSMutableArray alloc] initWithCapacity:m];
     while (m--) {
         RMSDataRelaySatellite *newDrs = [[RMSDataRelaySatellite alloc] init];
-        fscanf(drsParam, "%d", &satelliteID);;
+        fscanf(drsParam, "%d", &satelliteID);
+        NSLog(@"drsID %d", satelliteID);
         newDrs.uniqueID = satelliteID;
         
-        fscanf(param, "%lf %lf %lf %lf %lf %lf", &raan, &aop, &oi, &sma, &e, &ta);
+        fscanf(drsParam, "%lf %lf %lf %lf %lf %lf", &raan, &aop, &oi, &sma, &e, &ta);
         RMSSatelliteOrbit orbit;
         orbit.raan = raan;
         orbit.aop = aop;
@@ -133,8 +131,8 @@
 
 - (void)fire
 {
-    int time = SIMULATION_DURATION;
-    while (time--) {
+    double time = SIMULATION_DURATION;
+    while (time > 0) {
         for (RMSEarthObservationSatellite *eos in self.eosArray) {
             [eos updateState];
         }
@@ -142,6 +140,10 @@
         for (RMSDataRelaySatellite *drs in self.drsArray) {
             [drs updateState];
         }
+        
+        [self.calcuCenter updateState];
+        
+        time -= STATE_UPDATE_TIME_STEP;
     }
     
     for (RMSEarthObservationSatellite *eos in self.eosArray) {
